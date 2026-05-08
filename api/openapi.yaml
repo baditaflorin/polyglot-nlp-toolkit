@@ -1,0 +1,98 @@
+openapi: 3.1.0
+info:
+  title: Polyglot NLP Toolkit API
+  version: 0.1.0
+  description: Runtime corpus NLP API for tokenize, POS, parse, NER, embeddings, and clustering.
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      responses:
+        "200":
+          description: API is alive.
+  /readyz:
+    get:
+      responses:
+        "200":
+          description: NLP worker is available.
+        "503":
+          description: NLP worker is unavailable.
+  /metrics:
+    get:
+      responses:
+        "200":
+          description: Prometheus metrics.
+  /api/v1/languages:
+    get:
+      responses:
+        "200":
+          description: Supported language codes.
+  /api/v1/analyze:
+    post:
+      summary: Analyze a multilingual corpus.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeRequest"
+      responses:
+        "200":
+          description: Analysis result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeResponse"
+        "400":
+          description: Invalid request.
+        "504":
+          description: Worker timed out.
+components:
+  schemas:
+    AnalyzeRequest:
+      type: object
+      required: [documents, operations]
+      properties:
+        documents:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: string
+        language:
+          type: string
+          description: Optional BCP-47 or ISO language code. Omit for detection.
+        operations:
+          type: array
+          items:
+            type: string
+            enum: [detect, tokenize, pos, parse, ner, embed, cluster]
+        clusterCount:
+          type: integer
+          minimum: 1
+          maximum: 20
+    AnalyzeResponse:
+      type: object
+      required: [version, commit, engine, documents, clusters, warnings, durationMs]
+      properties:
+        version:
+          type: string
+        commit:
+          type: string
+        engine:
+          type: object
+        documents:
+          type: array
+          items:
+            type: object
+        clusters:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: string
+        durationMs:
+          type: number
