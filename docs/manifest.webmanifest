@@ -1,0 +1,10 @@
+{
+  "name": "Polyglot NLP Toolkit",
+  "short_name": "Polyglot NLP",
+  "start_url": "/polyglot-nlp-toolkit/",
+  "scope": "/polyglot-nlp-toolkit/",
+  "display": "standalone",
+  "background_color": "#fbfbf8",
+  "theme_color": "#0f766e",
+  "icons": []
+}
