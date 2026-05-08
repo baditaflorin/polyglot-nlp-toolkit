@@ -44,3 +44,7 @@ vendor/
 dist-data/
 
 # Keep docs/ committed: GitHub Pages publishes from docs/.
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
