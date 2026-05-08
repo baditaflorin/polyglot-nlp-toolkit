@@ -1,0 +1,46 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Logs and temp
+*.log
+tmp/
+temp/
+
+# Node
+node_modules/
+coverage/
+frontend/coverage/
+frontend/dist/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Go
+bin/
+*.test
+*.out
+vendor/
+
+# Docker and generated data
+dist-data/
+
+# Keep docs/ committed: GitHub Pages publishes from docs/.

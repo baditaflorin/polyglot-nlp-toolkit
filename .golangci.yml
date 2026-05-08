@@ -1,0 +1,36 @@
+version: "2"
+linters:
+  enable:
+    - gocyclo
+    - errcheck
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - revive
+    - staticcheck
+    - unused
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - gosec
+        path: _test\.go
+    paths:
+      - frontend/node_modules
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - frontend/node_modules
+      - third_party$
+      - builtin$
+      - examples$
