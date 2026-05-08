@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        VERSION: ${APP_VERSION:-0.1.0}
+        COMMIT: ${APP_COMMIT:-dev}
+    image: ghcr.io/baditaflorin/polyglot-nlp-toolkit:dev
+    environment:
+      APP_ENV: development
+      PAGES_ORIGIN: http://localhost:5173
+    ports:
+      - "8080:8080"
+    read_only: false
