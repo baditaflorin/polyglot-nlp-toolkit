@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 PROJECT_NAME := polyglot-nlp-toolkit
 OWNER := baditaflorin
-VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo 0.1.0)
+VERSION ?= $(shell git describe --tags --abbrev=0 2>/dev/null || node -p "require('./frontend/package.json').version" 2>/dev/null || echo 0.1.0)
 COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo dev)
 IMAGE ?= ghcr.io/$(OWNER)/$(PROJECT_NAME)
 FRONTEND_DIR := frontend
