@@ -37,3 +37,6 @@ After implementation:
 - Production UI stubs: 0. Visible controls have handlers.
 - Real-user path tests: input parser tests, exporter tests, schema tests, and
   expanded Playwright smoke coverage.
+- SOLID/module shape: output controls and result rendering were split out of
+  `Analyzer.tsx`; the remaining analyzer component owns orchestration of the
+  single corpus workflow and is an accepted follow-up refactor candidate.
