@@ -33,7 +33,7 @@ test('stranger workflow controls are present and file input loads real data', as
   });
 
   await expect(page.getByText('Loaded 2 documents from people.csv (csv).')).toBeVisible();
-  await expect(page.getByText('2 documents')).toBeVisible();
+  await expect(page.getByText('2 documents', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Copy curl' })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'State file' })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Copy JSON' })).toBeDisabled();

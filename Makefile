@@ -43,7 +43,7 @@ test-integration: ## run integration tests
 	cd $(FRONTEND_DIR) && npm run test:e2e -- --project=chromium
 
 smoke: ## build, serve Pages output, and run smoke tests
-	./scripts/smoke.sh
+	bash ./scripts/smoke.sh
 
 lint: ## run linters
 	gofmt -w $$(find . -path ./frontend -prune -o -path ./.git -prune -o -name '*.go' -print)
@@ -57,7 +57,7 @@ fmt: ## autoformat code
 	cd $(FRONTEND_DIR) && npm run format
 
 pages-preview: ## serve docs locally as GitHub Pages would
-	tmp_dir=$$(mktemp -d); ln -s "$$(pwd)/$(PAGES_DIR)" "$$tmp_dir/$(PROJECT_NAME)"; trap 'rm -rf "$$tmp_dir"' EXIT; python3 -m http.server 4173 --directory "$$tmp_dir"
+	node scripts/serve-pages.mjs 4173 $(PAGES_DIR)
 
 docker-build: ## build amd64 backend image
 	docker buildx build --platform linux/amd64 --build-arg VERSION=$(VERSION) --build-arg COMMIT=$(COMMIT) -t $(IMAGE):latest -t $(IMAGE):$(VERSION) -t $(IMAGE):$(COMMIT) .

@@ -6,8 +6,6 @@ cd "$root_dir"
 
 make build
 
-preview_root="$(mktemp -d)"
-ln -s "$root_dir/docs" "$preview_root/polyglot-nlp-toolkit"
 port="$(python3 - <<'PY'
 import socket
 s = socket.socket()
@@ -17,11 +15,10 @@ s.close()
 PY
 )"
 
-python3 -m http.server "$port" --bind 127.0.0.1 --directory "$preview_root" >/tmp/polyglot-nlp-pages.log 2>&1 &
+node scripts/serve-pages.mjs "$port" docs >/tmp/polyglot-nlp-pages.log 2>&1 &
 server_pid=$!
 cleanup() {
   kill "$server_pid" >/dev/null 2>&1 || true
-  rm -rf "$preview_root"
 }
 trap cleanup EXIT
 
