@@ -26,12 +26,34 @@ API at http://localhost:8080 by default.
 
 ## What It Does
 
-- Drop in raw text or multiple documents.
+- Load your own corpus from pasted text, HTML, CSV, TSV, JSON document arrays,
+  multi-file upload, drag-and-drop, clipboard text, share URLs, or exported
+  workspace state.
 - Choose language detection, tokenization, POS, dependency parsing, NER,
   embeddings, and clustering.
+- Resume after reload through local autosave, or start fresh with one click.
+- Export analysis JSON, token CSV, workspace state, a share URL, a print view,
+  and a curl command for the current request.
 - Run the work through a Go API that orchestrates spaCy, Stanza, NLTK,
   sentence-transformers, and Java LangDetect.
-- Publish the UI from GitHub Pages and deploy the backend as an amd64 GHCR image.
+- Publish the UI from GitHub Pages and deploy the backend as an amd64 Docker
+  image. GHCR publishing is wired through `make docker-push`; it requires a
+  running Docker daemon and registry access.
+
+## Verified User Paths
+
+- `npm test -- --run` covers schemas, input parsing, state import, JSON/CSV/curl
+  exporters, and deterministic export helpers.
+- `make smoke` builds the Pages app, serves it locally, and runs Playwright
+  against project links plus the file-input/export-control workflow.
+
+## Limitations
+
+- The public Pages app is static. Analysis requires a running backend API.
+- The browser cannot fetch arbitrary remote pages because of CORS. Paste rendered
+  text or HTML instead.
+- OCR/image input is not implemented.
+- Large state is exported as a file rather than a share URL.
 
 ## Architecture
 
