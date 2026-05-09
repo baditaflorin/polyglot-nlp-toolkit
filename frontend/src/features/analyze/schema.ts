@@ -67,6 +67,31 @@ export const analyzeResponseSchema = z.object({
   durationMs: z.number(),
 });
 
+export const workspaceSettingsSchema = z.object({
+  apiBaseUrl: z.string().min(1),
+  language: z.string(),
+  operations: z.array(operationSchema).min(1),
+  clusterCount: z.number().int().min(1).max(20),
+});
+
+export const inputSummarySchema = z.object({
+  source: z.string(),
+  format: z.string(),
+  documentsAdded: z.number().int().min(0),
+  warning: z.string().optional(),
+});
+
+export const workspaceStateSchema = z.object({
+  schemaVersion: z.literal(1),
+  corpus: z.string(),
+  settings: workspaceSettingsSchema,
+  inputSummaries: z.array(inputSummarySchema),
+  lastResult: analyzeResponseSchema.optional(),
+});
+
 export type Operation = z.infer<typeof operationSchema>;
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
 export type AnalyzeResponse = z.infer<typeof analyzeResponseSchema>;
+export type WorkspaceSettings = z.infer<typeof workspaceSettingsSchema>;
+export type InputSummary = z.infer<typeof inputSummarySchema>;
+export type WorkspaceState = z.infer<typeof workspaceStateSchema>;

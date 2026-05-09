@@ -25,4 +25,21 @@ Before summary: 1 green, 5 yellow, 7 red, 2 gray.
 
 ## After
 
-To be updated during implementation. Phase 3 target: every non-gray row green.
+| Entry point | Status | Evidence |
+| --- | --- | --- |
+| Paste plain text | Green | Textarea remains the primary corpus input. |
+| Paste HTML | Green | `onPaste` reads `text/html`, strips non-visible tags, and loads visible text. |
+| Paste CSV/TSV | Green | Shared parser detects delimiters and converts rows to documents. |
+| File upload | Green | File picker accepts text, CSV, TSV, HTML, JSON, and state files. |
+| Drag and drop | Green | Dropped files use the same parser as the file picker. |
+| Multi-file input | Green | Multiple files are parsed and appended with per-source summaries. |
+| Clipboard read button | Green | Clipboard button reads text when permission allows and gives fallback guidance when blocked. |
+| Mobile picker | Green | Standard multi-file input works with mobile file providers. |
+| URL input | Gray | Out of scope by ADR 0061; users paste rendered text or HTML instead. |
+| Image/OCR input | Gray | Out of scope by ADR 0061. |
+| Sample/demo loader | Green | Explicit Sample button restores the built-in corpus. |
+| Deep links | Green | Small workspaces restore from `#state=` links. |
+| Imported state | Green | Exported state JSON files restore the workspace. |
+| Restored autosave | Green | Versioned workspace state persists to localStorage. |
+
+After summary: 13 green, 0 yellow, 0 red, 2 gray.

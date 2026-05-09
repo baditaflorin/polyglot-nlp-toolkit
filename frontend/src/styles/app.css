@@ -33,3 +33,20 @@ textarea {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
+
+@media print {
+  header,
+  footer,
+  form,
+  button {
+    display: none !important;
+  }
+
+  main {
+    background: white !important;
+  }
+
+  .shadow-panel {
+    box-shadow: none !important;
+  }
+}

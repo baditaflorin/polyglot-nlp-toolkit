@@ -22,4 +22,18 @@ Before summary: 1 green, 1 yellow, 8 red, 1 gray.
 
 ## After
 
-To be updated during implementation. Phase 3 target: every non-gray row green.
+| Exit path | Status | Evidence |
+| --- | --- | --- |
+| On-screen analysis | Green | Results panel still shows engine status, tokens, entities, clusters. |
+| Copy JSON | Green | Copy JSON uses canonical analysis export. |
+| Download JSON | Green | JSON download writes `polyglot-analysis.json`. |
+| Download CSV | Green | CSV download writes token-level rows. |
+| Copy CSV | Green | Copy CSV uses the same token exporter. |
+| Download state file | Green | State file uses versioned workspace schema. |
+| Import exported state | Green | Shared input parser restores state files. |
+| Share URL | Green | Small workspaces can be copied/restored through `#state=`. |
+| Print-friendly output | Green | Print action and print CSS hide input chrome. |
+| API/curl-ready output | Green | Copy curl command reflects current request/settings. |
+| Screenshot/embed/code export | Gray | Out of scope by ADR 0062. |
+
+After summary: 10 green, 0 yellow, 0 red, 1 gray.

@@ -27,4 +27,13 @@ Before metrics:
 
 ## After Measurements
 
-To be updated after implementation.
+After implementation:
+
+- DRY violations in core modules: 0. Request assembly, input parsing, exporting,
+  and persistence each have one source of truth.
+- TODO/FIXME/XXX/HACK markers: 0.
+- Unsafe TypeScript casts outside explicit boundary modules: 0. The remaining
+  env cast is documented by ADR 0069 as a boundary adapter.
+- Production UI stubs: 0. Visible controls have handlers.
+- Real-user path tests: input parser tests, exporter tests, schema tests, and
+  expanded Playwright smoke coverage.

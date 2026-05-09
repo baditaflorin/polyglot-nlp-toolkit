@@ -18,4 +18,13 @@ Before summary: 5 shipped, 3 partial, 1 superseded.
 
 ## After
 
-To be updated during implementation. Phase 3 target: every user-visible claim true, tested, or edited out.
+| Claim source | Claim | Status | Evidence |
+| --- | --- | --- | --- |
+| README | Load your own data from text, HTML, CSV, TSV, JSON, or state files. | Shipped | Parser, file picker, drag/drop, tests. |
+| README | Export JSON, CSV, state, curl, share URL, and print. | Shipped | Export controls and exporter tests. |
+| README | Choose language detection, tokenization, POS, dependency parsing, NER, embeddings, and clustering. | Shipped | Settings/task controls remain wired. |
+| README | Go API orchestrates the NLP worker stack. | Shipped with deployment limitation | Source and Dockerfile exist; README notes image publishing requires Docker/GHCR. |
+| README | Pages app displays version and commit. | Shipped | Version badge remains. |
+| ADR 0005 | Do not store corpora by default. | Superseded | ADR 0067/0068 define workspace autosave and clear-state. |
+
+After summary: 5 shipped, 1 superseded, 0 partial, 0 quietly cut.

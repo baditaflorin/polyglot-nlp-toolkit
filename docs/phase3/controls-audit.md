@@ -25,4 +25,22 @@ Before summary: 7 green, 1 yellow, 6 red.
 
 ## After
 
-To be updated during implementation. Phase 3 target: every row green.
+| Control | Status | Evidence |
+| --- | --- | --- |
+| Corpus textarea | Green | Updates versioned workspace state. |
+| API base URL input | Green | Persists and affects request/exported curl. |
+| Language select | Green | Persists and affects request. |
+| Task toggle buttons | Green | Persist and affect request. |
+| Cluster count slider | Green | Persists and affects request. |
+| Run NLP pipeline | Green | Runs current request and saves result in workspace. |
+| Cancel | Green | Aborts the browser request and preserves corpus/settings. |
+| GitHub link | Green | Points at repository. |
+| PayPal link | Green | Points at PayPal. |
+| Sample loader | Green | Restores built-in sample. |
+| Start fresh | Green | Clears localStorage and live workspace. |
+| File picker | Green | Loads supported files. |
+| Paste from clipboard | Green | Reads clipboard or shows fallback. |
+| Export controls | Green | Copy/download/share/print/curl controls are wired. |
+| Settings panel | Green | Contains only working settings. |
+
+After summary: 15 green, 0 yellow, 0 red.
