@@ -40,6 +40,37 @@ describe('exporters', () => {
     expect(csv).toContain('doc-1,ro,0,Ana');
   });
 
+  it('neutralizes CSV formula injection in token text', () => {
+    const malicious: AnalyzeResponse = {
+      ...response,
+      documents: [
+        {
+          ...response.documents[0],
+          tokens: [
+            { text: '=HYPERLINK("https://evil.example","click")', lemma: '=cmd', start: 0, end: 1 },
+            { text: '+1+1', lemma: 'plus', start: 1, end: 2 },
+            { text: '-1', lemma: 'minus', start: 2, end: 3 },
+            { text: '@mention', lemma: 'at', start: 3, end: 4 },
+            { text: 'safe', lemma: 'safe', start: 4, end: 5 },
+          ],
+        },
+      ],
+    };
+    const csv = analysisToTokenCsv(malicious);
+    const lines = csv.trim().split('\n').slice(1);
+    // Every cell that would otherwise start with a formula-trigger character
+    // must be prefixed with a leading apostrophe so spreadsheet apps treat
+    // it as literal text instead of executing it as a formula.
+    expect(lines[0]).toContain('\'=HYPERLINK');
+    expect(lines[0]).toContain('\'=cmd');
+    expect(lines[1]).toContain('\'+1+1');
+    expect(lines[2]).toContain('\'-1');
+    expect(lines[3]).toContain('\'@mention');
+    // Values that don't start with a formula-trigger character are
+    // untouched.
+    expect(lines[4]).toContain(',safe,safe,');
+  });
+
   it('builds curl for the current request', () => {
     expect(buildCurlCommand(defaultWorkspace)).toContain('/api/v1/analyze');
   });
