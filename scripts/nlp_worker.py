@@ -16,7 +16,45 @@ from dataclasses import dataclass
 from typing import Any
 
 
-TOKEN_RE = re.compile(r"\w+|[^\w\s]", re.UNICODE)
+# Chinese (Han) text and Japanese kana/kanji are written with no whitespace
+# between words at all. A plain `\w+` is greedy and unicode-aware, so it
+# swallows an entire run of those characters (e.g. a whole sentence) into a
+# single "token", collapsing word counts to ~1 per clause. Match those
+# scripts one character at a time so tokenization still produces meaningful
+# token/word counts for them.
+#
+# Hangul (Korean) is deliberately excluded: Korean uses spaces between words
+# (eojeol) the same way Latin/Cyrillic/Arabic do, so `\w+` already produces
+# reasonable word-level tokens for it -- splitting it per-syllable would be a
+# regression, not a fix.
+_CJK_CHAR_CLASS = (
+    r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff"  # CJK Unified Ideographs (+ ext A, compat)
+    r"\u3040-\u30ff]"  # Hiragana + Katakana
+)
+TOKEN_RE = re.compile(rf"{_CJK_CHAR_CLASS}|\w+|[^\w\s]", re.UNICODE)
+_CJK_CHAR_ONLY_RE = re.compile(_CJK_CHAR_CLASS)
+
+
+def _split_unsegmented_cjk_run(token_text: str) -> list[str]:
+    """Re-segment a single spaCy token that contains an unsegmented run of
+    Han (Chinese/Japanese) ideographs or Japanese kana.
+
+    spaCy's whitespace-based tokenizers (the blank "xx" multi-language model,
+    used whenever a language has neither a trained pipeline nor a dedicated
+    tokenizer dependency installed -- e.g. Japanese without SudachiPy in this
+    project's own Docker image) treat an entire run of CJK characters with no
+    ASCII whitespace as one token, and -- because they don't know CJK
+    full-width punctuation ("。", "、", etc.) is a boundary either -- can merge
+    *across* sentences into a single token spanning both. Left alone, that
+    collapses word counts to ~1 per sentence and hides sentence boundaries.
+
+    Re-tokenizing with TOKEN_RE recovers per-character CJK tokens and splits
+    out punctuation, while leaving tokens with no CJK characters at all
+    (Latin, Cyrillic, Arabic, digits, ordinary punctuation) untouched.
+    """
+    if len(token_text) <= 1 or not _CJK_CHAR_ONLY_RE.search(token_text):
+        return [token_text]
+    return [match.group(0) for match in TOKEN_RE.finditer(token_text)]
 
 
 def import_status(module_name: str) -> tuple[Any | None, str]:
@@ -219,18 +257,42 @@ def extract_tokens(text: str, spacy_doc: Any | None, operations: set[str], warni
         has_dep = any(token.dep_ for token in spacy_doc)
         for token in spacy_doc:
             head = int(token.head.i) if token.head is not None else None
-            row = {
-                "text": token.text,
-                "lemma": token.lemma_ if token.lemma_ else token.text.lower(),
-                "pos": token.pos_ if "pos" in operations else "",
-                "tag": token.tag_ if "pos" in operations else "",
-                "dep": token.dep_ if "parse" in operations else "",
-                "start": int(token.idx),
-                "end": int(token.idx + len(token.text)),
-            }
-            if "parse" in operations:
-                row["head"] = head
-            rows.append(row)
+            sub_texts = _split_unsegmented_cjk_run(token.text)
+            if len(sub_texts) == 1:
+                row = {
+                    "text": token.text,
+                    "lemma": token.lemma_ if token.lemma_ else token.text.lower(),
+                    "pos": token.pos_ if "pos" in operations else "",
+                    "tag": token.tag_ if "pos" in operations else "",
+                    "dep": token.dep_ if "parse" in operations else "",
+                    "start": int(token.idx),
+                    "end": int(token.idx + len(token.text)),
+                }
+                if "parse" in operations:
+                    row["head"] = head
+                rows.append(row)
+                continue
+            # A whitespace-only tokenizer (e.g. spaCy's blank "xx" model used
+            # when a language has no trained pipeline or dedicated
+            # segmenter) left this as one unsegmented Han/Kana run. Emit one
+            # row per character instead of a single sentence-sized "token" so
+            # word counts stay meaningful. POS/dep are not attributable per
+            # character here, so leave them blank.
+            offset = 0
+            for sub_text in sub_texts:
+                start = token.idx + offset
+                rows.append(
+                    {
+                        "text": sub_text,
+                        "lemma": sub_text.lower(),
+                        "pos": "",
+                        "tag": "",
+                        "dep": "",
+                        "start": int(start),
+                        "end": int(start + len(sub_text)),
+                    }
+                )
+                offset += len(sub_text)
         if "pos" in operations and not has_pos:
             warnings.append("POS tags unavailable for the loaded spaCy pipeline.")
         if "parse" in operations and not has_dep:

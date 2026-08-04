@@ -101,11 +101,22 @@ export async function copyText(content: string) {
   await navigator.clipboard.writeText(content);
 }
 
+// Token/lemma text comes straight from the analyzed corpus. If a cell value
+// starts with =, +, -, or @ (or a tab/CR), Excel, LibreOffice, and Google
+// Sheets treat it as a formula when the exported CSV is opened, which is a
+// classic CSV/"formula injection" vector (CWE-1236) -- e.g. a corpus token
+// of `=HYPERLINK("https://evil.example","click")` could exfiltrate data or
+// run further formulas for anyone who opens the exported file in a
+// spreadsheet app. Neutralize it the standard way: prefix with a leading
+// apostrophe so spreadsheet apps render the cell as literal text.
+const CSV_FORMULA_TRIGGER_RE = /^[=+\-@\t\r]/;
+
 function csvEscape(value: string) {
-  if (/[",\n\r]/.test(value)) {
-    return `"${value.replace(/"/g, '""')}"`;
+  const safe = CSV_FORMULA_TRIGGER_RE.test(value) ? `'${value}` : value;
+  if (/[",\n\r]/.test(safe)) {
+    return `"${safe.replace(/"/g, '""')}"`;
   }
-  return value;
+  return safe;
 }
 
 function encodeBase64Url(input: string) {

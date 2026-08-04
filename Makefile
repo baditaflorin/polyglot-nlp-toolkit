@@ -37,6 +37,7 @@ data: ## Mode C has no static data generation pipeline
 test: ## run unit tests
 	CGO_ENABLED=0 go test $(GO_PACKAGES)
 	cd $(FRONTEND_DIR) && npm test -- --run
+	python3 scripts/nlp_worker_test.py
 
 test-integration: ## run integration tests
 	go test -tags=integration ./test/integration/...
